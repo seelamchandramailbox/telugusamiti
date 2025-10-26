@@ -1,10 +1,25 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { LogIn } from 'lucide-react';
+import { LogIn, UserCircle, Shield } from 'lucide-react';
 
 interface LoginProps {
   onToggle: () => void;
 }
+
+const TEST_ACCOUNTS = [
+  {
+    email: 'admin@nonprofit.org',
+    password: 'admin123',
+    role: 'Admin',
+    icon: Shield,
+  },
+  {
+    email: 'testuser@nonprofit.org',
+    password: 'test123',
+    role: 'Donor',
+    icon: UserCircle,
+  },
+];
 
 export const Login = ({ onToggle }: LoginProps) => {
   const [email, setEmail] = useState('');
@@ -12,6 +27,11 @@ export const Login = ({ onToggle }: LoginProps) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
+
+  const handleQuickLogin = (testEmail: string, testPassword: string) => {
+    setEmail(testEmail);
+    setPassword(testPassword);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +57,35 @@ export const Login = ({ onToggle }: LoginProps) => {
         </div>
 
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Welcome Back</h2>
-        <p className="text-center text-gray-600 mb-8">Sign in to your account</p>
+        <p className="text-center text-gray-600 mb-6">Sign in to your account</p>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <p className="text-sm font-semibold text-blue-800 mb-3 text-center">Test Accounts</p>
+          <div className="space-y-2">
+            {TEST_ACCOUNTS.map((account) => {
+              const Icon = account.icon;
+              return (
+                <button
+                  key={account.email}
+                  type="button"
+                  onClick={() => handleQuickLogin(account.email, account.password)}
+                  className="w-full flex items-center justify-between p-3 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Icon className="w-5 h-5 text-blue-600" />
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-gray-800">{account.role}</p>
+                      <p className="text-xs text-gray-500">{account.email}</p>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-400 group-hover:text-blue-600 transition">
+                    Click to use
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
